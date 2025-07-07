@@ -1,0 +1,120 @@
+/* NAVBAR STYLES */
+#main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    transition: all 0.3s;
+}
+
+#main-header.scrolled,
+#main-header.menu-open {
+    background-color: var(--dark-color);
+    background-image: none;
+}
+
+.logo {
+    color: var(--primary-color);
+    font-weight: bold;
+    text-decoration: none;
+
+    /* Dimensioni responsive con clamp() */
+    font-size: clamp(1.5rem, 3vw, 3rem);
+
+    /* Padding responsive */
+    padding-left: clamp(1rem, 4vw, 4rem);
+    padding-top: clamp(0.5rem, 2vw, 2rem);
+
+    /* Transizione fluida */
+    transition: all 0.3s ease;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: var(--light-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: var(--secondary-color);
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: white;
+    background: none;
+    border: none;
+    padding: 5px;
+}
+
+
+
+/* Mobile styles */
+@media (max-width: 800px) {
+    #main-header {
+        padding: 10px 15px;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    nav {
+        position: fixed;
+        top: 55px;
+        left: 0;
+        right: 0;
+        background-color: var(--dark-color);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+    }
+
+    nav.active {
+        max-height: calc(100vh - 60px);
+        overflow-y: auto;
+    }
+
+    nav ul {
+        flex-direction: column;
+        padding: 10px 0;
+    }
+
+    nav ul li {
+        margin: 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    nav ul li a {
+        display: block;
+        padding: 12px 20px;
+    }
+
+    .logo {
+        font-size: 2rem;
+        padding-left: 0;
+        padding-top: 0;
+    }
+}
