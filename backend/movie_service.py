@@ -56,9 +56,8 @@ def get_longest(limit=15):
 
 def get_most_review(limit=15):
     """
-    Restituisce i film con il punteggio tomatometer_count più alto.
-    - Ordina in modo decrescente per tomatometer_count (numeri interi).
-    - Esclude eventuali documenti privi di quel campo o con valore nullo.
+    Restituisce i film con piu reviews.
+    - Ordina in modo decrescente per numero di reviews.
     """
     cur = (
         _movies.find(
