@@ -23,8 +23,16 @@
                 <div class="movie-info">
                     <h1 class="movie-title">{{ movie.movie_title }}</h1>
                     <div class="movie-meta">
-                        <span class="movie-year">{{movie.original_release_date.strftime('%Y') }}</span>
-                        <span class="movie-duration">{{ movie.runtime }} min</span>
+                        {% if movie.original_release_date %}
+                            <span class="movie-year">{{ movie.original_release_date.strftime('%Y') }}</span>
+                        {% else %}
+                            <span class="movie-year">Data non disponibile</span>
+                        {% endif %}
+                        {% if movie.runtime %}
+                            <span class="movie-duration">{{ movie.runtime }} min</span>
+                        {% else %}
+                            <span class="movie-duration">Durata non disponibile</span>
+                        {% endif %}
                         <span class="movie-genres">{{ movie.genres}}</span>
                         <div class="movie-rating">
                             <i class="fas fa-tomato tomato-icon"></i>
