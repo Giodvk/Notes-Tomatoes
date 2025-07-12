@@ -7,29 +7,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='home/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='navbar/navbar.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* Stili per le icone Rotten Tomatoes */
-        .rt-logo {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 18px;
-            height: 18px;
-            background-color: #FA320A;
-            border-radius: 3px;
-            margin-left: 5px;
-            position: relative;
-        }
-
-        .rt-logo::after {
-            content: "RT";
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            font-family: Arial, sans-serif;
-            position: absolute;
-        }
-    </style>
 </head>
 <body>
     <div id="navbar-container">
@@ -55,7 +32,7 @@
             </button>
             <div class="movie-row" id="row1">
                 {% for movie in movies %}
-                <div class="movie-card">
+                <a href="{{ url_for('pagina_film', movie_id=movie._id) }}" class="movie-card">
                     <img src="{{ movie.poster_url or url_for('static', filename='placeholder.jpg') }}"
                          alt="{{ movie.movie_title }}">
                     <div class="movie-info">
@@ -68,7 +45,7 @@
                             <span class="rt-logo" title="Punteggio Rotten Tomatoes"></span>
                         </div>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
             <button class="scroll-btn right" onclick="scrollRow(this, 300)">
@@ -85,7 +62,7 @@
             </button>
             <div class="movie-row" id="row2">
                 {% for movie in top %}
-                <div class="movie-card">
+                <a href="{{ url_for('pagina_film', movie_id=movie._id) }}" class="movie-card">
                     <img src="{{ movie.poster_url or 'https://via.placeholder.com/220x330' }}"
                          alt="{{ movie.movie_title }}">
                     <div class="movie-info">
@@ -98,7 +75,7 @@
                             <span class="rt-logo" title="Punteggio Rotten Tomatoes"></span>
                         </div>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
             <button class="scroll-btn right" onclick="scrollRow(this, 300)">
@@ -115,7 +92,7 @@
             </button>
             <div class="movie-row" id="row3">
                 {% for movie in recent %}
-                <div class="movie-card">
+                <a href="{{ url_for('pagina_film', movie_id=movie._id) }}" class="movie-card">
                     <img src="{{ movie.poster_url or 'https://via.placeholder.com/220x330?text=Nessuna+immagine' }}" alt="{{ movie.movie_title }}">
                     <div class="movie-info">
                         <div class="movie-title">{{ movie.movie_title }}</div>
@@ -127,7 +104,7 @@
                             <span class="rt-logo" title="Punteggio Rotten Tomatoes"></span>
                         </div>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
             <button class="scroll-btn right" onclick="scrollRow(this, 300)">

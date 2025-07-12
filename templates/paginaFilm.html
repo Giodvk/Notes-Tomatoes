@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineCritica - Dettaglio Film</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar/navbar.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='paginaFilm/paginaFilm.css') }}">
+
+</head>
+<body>
+    <div id="navbar-container">
+        {% include 'navbar.html' %}
+    </div>
+
+    <div class="movie-detail-container">
+        <div class="movie-backdrop" style="background-image: linear-gradient(to right, rgba(20, 20, 20, 0.85) 10%, rgba(20, 20, 20, 0.3) 100%), url('{{ movie.backdrop_url or 'https://via.placeholder.com/1920x1080' }}');">
+            <div class="movie-content">
+                <div class="movie-poster">
+                    <img src="{{ movie.poster_url or 'https://via.placeholder.com/300x450' }}" alt="{{ movie.movie_title }}">
+                </div>
+                <div class="movie-info">
+                    <h1 class="movie-title">{{ movie.movie_title }}</h1>
+                    <div class="movie-meta">
+                        <span class="movie-year">{{movie.original_release_date.strftime('%Y') }}</span>
+                        <span class="movie-duration">{{ movie.runtime }} min</span>
+                        <span class="movie-genres">{{ movie.genres}}</span>
+                        <div class="movie-rating">
+                            <i class="fas fa-tomato tomato-icon"></i>
+                            <span class="score">{{ movie.tomatometer_rating or 'N/A' }}%</span>
+                            <span class="rt-logo" title="Punteggio Rotten Tomatoes"></span>
+                        </div>
+                    </div>
+                    <div class="movie-actions">
+                        {% if movie.trailer_url %}
+                            <a href="{{ movie.trailer_url }}" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-play"></i> Guarda trailer
+                            </a>
+                        {% else %}
+                            <a class="btn btn-primary disabled" title="Trailer non disponibile">
+                                Trailer non disponibile
+                            </a>
+                        {% endif %}
+                        <a href="#" class="btn btn-secondary"><i class="fas fa-plus"></i> La mia lista</a>
+                    </div>
+                    <div class="movie-overview">
+                        <p>{{ movie.movie_info or 'Nessuna descrizione disponibile.' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="reviews-container">
+            <h2 class="section-title"><i class="fas fa-comment-alt"></i> Recensioni dei Critici</h2>
+
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-author-info">
+                            <div class="review-author">{{ review.critic_name }}</div>
+                            {% if review.top_critic %}
+                            <span class="top-critic-badge"><i class="fas fa-check-circle"></i> Top Critic</span>
+                            {% endif %}
+                        </div>
+                        <div class="review-publication">
+                            {% if review.review_score %}
+                            <div class="review-score">
+                                <i class="fas fa-star"></i>
+                                <span>{{ review.review_score }}</span>
+                            </div>
+                            {% endif %}
+                            <span class="publisher-name">{{ review.publisher_name }}</span>
+                            <span class="review-date">{{ review.review_date.strftime('%d-%m-%Y')}}</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <p>{{ review.review_content }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-reviews">
+                    <p>Nessuna recensione disponibile per questo film.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">Informazioni</a>
+            <a href="#">Contatti</a>
+            <a href="#">Termini di servizio</a>
+            <a href="#">Privacy</a>
+            <a href="#">Preferenze cookie</a>
+            <a href="#">Informazioni legali</a>
+        </div>
+        <p class="copyright">© 2023 CineCritica. Tutti i diritti riservati. Dati forniti da Rotten Tomatoes.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='navbar/navbar.js') }}"></script>
+</body>
+</html>

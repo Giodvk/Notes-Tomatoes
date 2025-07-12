@@ -1,10 +1,11 @@
+from bson import ObjectId
 from flask import Flask, abort
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from flask import Flask, render_template
 import os
 
-from backend.movie_service import get_certified_fresh, get_most_review, get_longest
+from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review
 
 # Carica variabili da .env
 load_dotenv()
@@ -25,6 +26,16 @@ def home():
     recent = get_longest(limit=15)
     top = get_most_review(limit=15)
     return render_template("home.html", movies=movies, recent=recent, top=top)
+
+
+@app.route('/film/<movie_id>')
+def pagina_film(movie_id):
+    movie = get_movie_by_id(movie_id)
+    if not movie:
+        return "Film non trovato", 404
+
+    reviews = get_movie_review(movie_id)
+    return render_template("paginaFilm.html", movie=movie, reviews=reviews)
 
 
 

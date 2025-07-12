@@ -356,3 +356,16 @@ footer {
 .movie-card:hover .movie-info {
     opacity: 1;
 }
+
+a.movie-card {
+    text-decoration: none;
+    color: inherit;
+}
+
+a.movie-card:link,
+a.movie-card:visited,
+a.movie-card:hover,
+a.movie-card:active {
+    color: inherit;
+    text-decoration: none;
+}
