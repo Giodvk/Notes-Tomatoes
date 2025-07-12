@@ -1,6 +1,8 @@
 from bson import ObjectId
 from flask import Flask, abort
-from pymongo import MongoClient
+from pymongo import MongoClient, ReadPreference
+from pymongo.read_concern import ReadConcern
+from pymongo.write_concern import WriteConcern
 from dotenv import load_dotenv
 from flask import Flask, render_template
 import os
@@ -16,8 +18,13 @@ DB_NAME = os.getenv("DB_NAME")
 app = Flask(__name__)
 
 # Connessione a MongoDB
-client = MongoClient(MONGO_URI)
-db = client[DB_NAME]
+client = MongoClient(MONGO_URI,
+                     readPreference='secondaryPreferred')
+db = client.get_database(
+    DB_NAME,
+    read_concern=ReadConcern("majority"),
+    write_concern=WriteConcern(w=2, wtimeout=1000)
+)
 
 # ── HOME ──────────────────────────────────────────────────────────
 @app.route("/")
