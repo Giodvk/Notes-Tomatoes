@@ -1,3 +1,4 @@
+import re
 from .db import get_db
 from .tmdb_service import fetch_poster_url, fetch_trailer_url
 from bson import ObjectId
@@ -130,3 +131,64 @@ def get_movie_by_id(movie_id):
     movie["trailer_url"] = _ensure_trailer(movie)
 
     return movie
+
+
+def search_movies_by_text(query_text: str, limit: int = 10):
+    if not query_text:
+        return []
+
+    try:
+        escaped_query = re.escape(query_text)
+        pipeline = [
+            # STAGE 1: Match ANY document that either starts with the text OR is a text-search match.
+            {
+                '$match': {
+                    '$or': [
+                        {'movie_title': {'$regex': f'^{escaped_query}', '$options': 'i'}},
+                        {'$text': {'$search': query_text}}
+                    ]
+                }
+            },
+            {
+                '$addFields': {
+                    'text_score': {'$meta': 'textScore'},
+                    'prefix_boost': {
+                        '$cond': {
+                            'if': {'$regexMatch': {'input': '$movie_title', 'regex': f'^{escaped_query}', 'options': 'i'}},
+                            'then': 100,
+                            'else': 0
+                        }
+                    }
+                }
+            },
+            {
+                '$addFields': {
+                    'total_score': {'$add': ['$text_score', '$prefix_boost']}
+                }
+            },
+            {'$sort': {'total_score': -1}},
+            {'$limit': limit},
+            {'$project': {'movie_title': 1, 'poster_url': 1, 'original_release_date': 1, '_id': 1, 'total_score': 1}}
+        ]
+        
+ 
+        # This abandons text search for the dropdown, which is often the right call.
+        escaped_query = re.escape(query_text)
+        
+        # Find movies where the title starts with the query
+        prefix_cursor = _movies.find(
+            {'movie_title': {'$regex': f'^{escaped_query}', '$options': 'i'}},
+            # Project the same fields
+            {'movie_title': 1, 'poster_url': 1, 'original_release_date': 1}
+        ).limit(limit)
+
+        results = []
+        for movie in prefix_cursor:
+            movie['_id'] = str(movie['_id'])
+            results.append(movie)
+
+        return results
+
+    except Exception as e:
+        print(f"Database regex search error: {e}")
+        return []

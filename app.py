@@ -1,13 +1,12 @@
 from bson import ObjectId
-from flask import Flask, abort
+from flask import Flask, abort, jsonify,render_template, request
 from pymongo import MongoClient, ReadPreference
 from pymongo.read_concern import ReadConcern
 from pymongo.write_concern import WriteConcern
 from dotenv import load_dotenv
-from flask import Flask, render_template
 import os
 
-from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review
+from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review, search_movies_by_text
 
 # Carica variabili da .env
 load_dotenv()
@@ -45,6 +44,20 @@ def pagina_film(movie_id):
     return render_template("paginaFilm.html", movie=movie, reviews=reviews)
 
 
+@app.route('/api/search')
+def api_search():
+    # Get the search term from the URL query parameter (e.g., /api/search?q=inception)
+    query = request.args.get('q', '').strip()
+
+    # Avoid searching for very short or empty strings
+    if len(query) < 2:
+        return jsonify([])
+
+    # Call your new, fast search function from movie_service
+    movies = search_movies_by_text(query)
+
+    # Return the results as a JSON array
+    return jsonify(movies)
 
 if __name__ == "__main__":
     app.run(debug=True)

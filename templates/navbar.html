@@ -1,15 +1,31 @@
 <header id="main-header">
+    <!-- Logo remains the same -->
     <a href="{{ url_for('home') }}" class="logo">CINECRITICA</a>
+
+    <!-- This new wrapper helps group nav and search on the right side -->
+    <div class="header-right">
+        <!-- Your original navigation menu -->
+        <nav id="nav-menu">
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="#">Film</a></li>
+                <li><a href="#">Serie TV</a></li>
+                <li><a href="#">Nuove uscite</a></li>
+                <li><a href="#">La mia lista</a></li>
+            </ul>
+        </nav>
+
+        <!-- START: NEW SEARCH BAR -->
+        <div class="search-container">
+            <input type="search" id="movie-search-input" placeholder="Search for a movie..." autocomplete="off">
+            <div id="search-spinner" class="spinner" style="display: none;"></div>
+            <div id="search-results-container"></div>
+        </div>
+        <!-- END: NEW SEARCH BAR -->
+    </div>
+
+    <!-- Hamburger menu remains the same -->
     <div class="hamburger" id="hamburger">
         <i class="fas fa-bars"></i>
     </div>
-    <nav id="nav-menu">
-        <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="#">Film</a></li>
-            <li><a href="#">Serie TV</a></li>
-            <li><a href="#">Nuove uscite</a></li>
-            <li><a href="#">La mia lista</a></li>
-        </ul>
-    </nav>
 </header>

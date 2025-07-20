@@ -118,3 +118,138 @@ nav ul li a:hover {
         padding-top: 0;
     }
 }
+
+/* =================================== */
+/*  NEW STYLES FOR SEARCH INTEGRATION  */
+/* =================================== */
+
+/* Wrapper for nav and search to sit together */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Adds some space between the nav links and the search bar */
+}
+
+/* SEARCH CONTAINER STYLING */
+.search-container {
+    position: relative; /* This is crucial for positioning the results dropdown */
+    width: 250px; /* Adjust width as needed */
+}
+
+#movie-search-input {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 20px; /* Pill shape */
+    border: 1px solid #555;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+#movie-search-input::placeholder {
+    color: #ccc;
+}
+
+#movie-search-input:focus {
+    background-color: white;
+    color: #333;
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Dropdown results container */
+#search-results-container {
+    position: absolute;
+    top: 110%; /* Position it right below the input with a small gap */
+    left: 0;
+    right: 0;
+    background-color: #222; /* Dark theme for results */
+    border: 1px solid #444;
+    border-radius: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none; /* Hidden by default, shown by JS */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+}
+
+/* Individual result item */
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    text-decoration: none;
+    color: #eee;
+    border-bottom: 1px solid #333;
+    transition: background-color 0.2s;
+}
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background-color: #333;
+}
+
+.search-result-item img {
+    width: 40px;
+    height: 60px;
+    object-fit: cover;
+    margin-right: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.search-result-item .result-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.result-info strong {
+    font-weight: 500;
+}
+
+.result-info span {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 3px;
+}
+
+/* Loading spinner position */
+.spinner {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* --- MOBILE RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 800px) {
+    .header-right {
+        /* On mobile, the search bar might be too wide. We hide the nav links and keep search */
+        gap: 15px;
+    }
+    
+    /* Hide the desktop nav links wrapper */
+    #nav-menu {
+        display: none;
+    }
+
+    /* Our existing .hamburger and nav.active styles will handle the mobile menu perfectly */
+
+    .search-container {
+        /* Make the search bar take up available space on mobile if desired */
+        width: 180px;
+    }
+}
