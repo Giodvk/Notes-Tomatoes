@@ -1,7 +1,6 @@
 import re
-import json
 from datetime import datetime
-
+from flask import url_for
 from CRUD_operations.OperatorReview import OperatorReview
 from .db import get_db
 from .tmdb_service import fetch_poster_url, fetch_trailer_url
@@ -12,16 +11,6 @@ _db = get_db()
 _movies = _db["Film_Rotten_Tomatoes"]
 _reviews = _db["Review_Rotten_Tomatoes"]
 op_film = OperatorFilm(_db, "Film_Rotten_Tomatoes")
-
-
-class JsonEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        if isinstance(o, datetime):
-            return str(o)
-        return json.JSONEncoder.default(self, o)
-
 
 
 def _ensure_poster(movie: dict) -> str | None:
@@ -35,7 +24,10 @@ def _ensure_poster(movie: dict) -> str | None:
         print(f"Trovato poster per {movie['movie_title']}: {poster}")
         _movies.update_one({"_id": movie["_id"]}, {"$set": {"poster_url": poster}})
     else:
-        print(f"Nessun poster trovato per {movie['movie_title']}")
+        print(f"Nessun poster trovato per {movie['movie_title']}, uso immagine di fallback")
+        fallback_poster = url_for('static', filename='img/no_available.jpg')
+        _movies.update_one({"_id": movie["_id"]}, {"$set": {"poster_url": fallback_poster}})
+        return fallback_poster
     return poster
 
 
@@ -147,12 +139,6 @@ def get_movie_by_id(movie_id):
     movie["trailer_url"] = _ensure_trailer(movie)
 
     return movie
-
-
-def get_movie_by_partial_name(partial_name):
-    json_encoder = JsonEncoder()
-    suggest = op_film.get_film_by_title_async(partial_name)
-    return json_encoder.encode(suggest)
 
 
 def search_movies_by_text(query_text: str, limit: int = 10):

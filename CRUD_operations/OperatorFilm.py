@@ -3,6 +3,7 @@ import pymongo
 from bson import ObjectId
 from logging import getLogger
 from bson.errors import InvalidId
+from backend.movie_service import _ensure_poster
 
 logger = getLogger(__name__)
 
@@ -45,3 +46,33 @@ class OperatorFilm:
 
     def get_all_films(self):
         return list(self.collection.find())
+
+    def get_top_critic_movies(self, limit=50):
+        try:
+            # Prima trova tutti gli ID di film con recensioni top critic
+            review_ids = self.collection.database["Review_Rotten_Tomatoes"].distinct(
+                "rotten_tomatoes_link",
+                {"top_critic": True}
+            )
+
+            # Poi recupera i film corrispondenti
+            movies = list(self.collection.find(
+                {"rotten_tomatoes_link": {"$in": review_ids}},
+                {
+                    "movie_title": 1,
+                    "poster_url": 1,
+                    "tomatometer_rating": 1,
+                    "top_critics_rating": 1,
+                    "rotten_tomatoes_link": 1
+                }
+            ).sort("tomatometer_rating", -1).limit(limit))
+
+            for movie in movies:
+                if not movie.get("poster_url"):
+                    movie["poster_url"] = _ensure_poster(movie)
+
+            return movies
+
+        except Exception as e:
+            logger.error(f"Errore in get_top_critic_movies: {str(e)}", exc_info=True)
+            return []
