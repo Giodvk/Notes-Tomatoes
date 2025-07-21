@@ -1,4 +1,7 @@
 import re
+
+from flask import url_for
+
 from .db import get_db
 from .tmdb_service import fetch_poster_url, fetch_trailer_url
 from bson import ObjectId
@@ -19,7 +22,10 @@ def _ensure_poster(movie: dict) -> str | None:
         print(f"Trovato poster per {movie['movie_title']}: {poster}")
         _movies.update_one({"_id": movie["_id"]}, {"$set": {"poster_url": poster}})
     else:
-        print(f"Nessun poster trovato per {movie['movie_title']}")
+        print(f"Nessun poster trovato per {movie['movie_title']}, uso immagine di fallback")
+        fallback_poster = url_for('static', filename='img/no_available.jpg')
+        _movies.update_one({"_id": movie["_id"]}, {"$set": {"poster_url": fallback_poster}})
+        return fallback_poster
     return poster
 
 

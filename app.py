@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import os
 
 from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review, search_movies_by_text
+from CRUD_operations.OperatorFilm import OperatorFilm
 
 # Carica variabili da .env
 load_dotenv()
@@ -25,6 +26,7 @@ db = client.get_database(
     write_concern=WriteConcern(w=2, wtimeout=1000)
 )
 
+film_operator = OperatorFilm(db, "Film_Rotten_Tomatoes")
 # ── HOME ──────────────────────────────────────────────────────────
 @app.route("/")
 def home():
@@ -42,6 +44,12 @@ def pagina_film(movie_id):
 
     reviews = get_movie_review(movie_id)
     return render_template("paginaFilm.html", movie=movie, reviews=reviews)
+
+
+@app.route('/top-critic')
+def top_critic():
+    top_critics_movies = film_operator.get_top_critic_movies(limit=50)
+    return render_template("topCritic.html", top_critics_movies=top_critics_movies)
 
 
 @app.route('/api/search')
