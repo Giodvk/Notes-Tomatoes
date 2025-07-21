@@ -5,12 +5,12 @@ from CRUD_operations.OperatorReview import OperatorReview
 from .db import get_db
 from .tmdb_service import fetch_poster_url, fetch_trailer_url
 from bson import ObjectId
-from CRUD_operations.OperatorFilm import OperatorFilm
+
 
 _db = get_db()
 _movies = _db["Film_Rotten_Tomatoes"]
 _reviews = _db["Review_Rotten_Tomatoes"]
-op_film = OperatorFilm(_db, "Film_Rotten_Tomatoes")
+
 
 
 def _ensure_poster(movie: dict) -> str | None:
@@ -205,7 +205,7 @@ def search_movies_by_text(query_text: str, limit: int = 10):
 def insert_review(data_review, movie_id):
     review_dict = {}
     operatorReview = OperatorReview(_db, "Review_Rotten_Tomatoes")
-    movie = op_film.get_film_by_id(movie_id)
+    movie = get_movie_by_id(movie_id)
     review_dict['rotten_tomatoes_link'] = movie['rotten_tomatoes_link']
     review_dict['critic_name'] = data_review.get('critic_name')
     review_dict['publisher_name'] = data_review.get('publisher_name')
