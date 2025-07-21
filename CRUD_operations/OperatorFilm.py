@@ -30,7 +30,8 @@ class OperatorFilm:
         return list(self.collection.find({'movie_title': film_title}))
 
     def get_film_by_title_async(self, film_initial: str):
-        return list(self.collection.find({'movie_title': {'$regex': film_initial + "*"}}))
+        return list(self.collection.find({'movie_title': {'$regex': "^" + film_initial, "$options": "i"}},
+                                         {'movie_title': 1}).limit(5))
 
     def get_film_by_genre(self, film_genre: str):
         return list(self.collection.aggregate(
