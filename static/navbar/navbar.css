@@ -233,23 +233,88 @@ nav ul li a:hover {
 @keyframes spin {
     to { transform: translateY(-50%) rotate(360deg); }
 }
-
-/* --- MOBILE RESPONSIVE ADJUSTMENTS --- */
+/* =================================== */
+/*        MOBILE STYLES (MERGED)       */
+/* =================================== */
 @media (max-width: 800px) {
+    /* --- Header & Logo --- */
+    #main-header {
+        padding: 10px 15px;
+    }
+
+    .logo {
+        font-size: 1.8rem; /* Adjusted for better fit */
+        padding-left: 0;
+        padding-top: 0;
+    }
+
+    /* --- Hamburger Menu --- */
+    .hamburger {
+        display: block;
+        z-index: 101; /* Ensure it's on top of other header content */
+    }
+
+    /* --- Main Nav Container (The Mobile Menu) --- */
+    /* This is where we remove `display: none` and rely on `max-height` */
+    #nav-menu {
+        position: fixed;
+        top: 60px; /* Start below the header */
+        left: 0;
+        right: 0;
+        background-color: var(--dark-color);
+        
+        /* This is how we hide it, NOT with display:none */
+        max-height: 0;
+        overflow: hidden;
+
+        transition: max-height 0.35s ease-in-out;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+    }
+
+    /* The active state, toggled by JS, reveals the menu */
+    #nav-menu.active {
+        max-height: 100vh; /* A large value to ensure it can open fully */
+        overflow-y: auto;
+    }
+
+    /* --- Nav List & Items --- */
+    #nav-menu ul {
+        flex-direction: column;
+        padding: 10px 0;
+    }
+
+    #nav-menu ul li {
+        margin: 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    #nav-menu ul li a {
+        display: block;
+        padding: 15px 20px;
+        border-bottom: 1px solid #333; /* Separator for clarity */
+    }
+     #nav-menu ul li:last-child a {
+        border-bottom: none;
+     }
+
+
+    /* --- Right side of header (Search Bar) --- */
     .header-right {
-        /* On mobile, the search bar might be too wide. We hide the nav links and keep search */
-        gap: 15px;
+        /* We only want the search bar visible here by default on mobile */
+        /* The nav menu is now positioned fixed, so it's out of this flex container */
+        gap: 0; 
     }
     
-    /* Hide the desktop nav links wrapper */
-    #nav-menu {
-        display: none;
-    }
-
-    /* Our existing .hamburger and nav.active styles will handle the mobile menu perfectly */
-
     .search-container {
-        /* Make the search bar take up available space on mobile if desired */
-        width: 180px;
+        /* Make the search bar take up available space */
+        flex-grow: 1;
+        max-width: 220px; /* Give it a max-width to not be huge */
+        margin-right: 15px; /* Add some space between it and the hamburger */
+    }
+    
+    #movie-search-input {
+        padding: 6px 10px;
+        font-size: 13px;
     }
 }
