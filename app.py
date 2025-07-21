@@ -5,8 +5,8 @@ from pymongo.read_concern import ReadConcern
 from pymongo.write_concern import WriteConcern
 from dotenv import load_dotenv
 import os
-
-from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review, search_movies_by_text
+from CRUD_operations.OperatorFilm import OperatorFilm
+from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review, search_movies_by_text, insert_review, delete_review
 
 # Carica variabili da .env
 load_dotenv()
@@ -25,6 +25,7 @@ db = client.get_database(
     write_concern=WriteConcern(w=2, wtimeout=1000)
 )
 
+film_operator = OperatorFilm(db, "Film_Rotten_Tomatoes")
 # ── HOME ──────────────────────────────────────────────────────────
 @app.route("/")
 def home():
@@ -42,6 +43,28 @@ def pagina_film(movie_id):
 
     reviews = get_movie_review(movie_id)
     return render_template("paginaFilm.html", movie=movie, reviews=reviews)
+
+@app.route("/inserisci_recensione/<movie_id>", methods=['POST'])
+def inserisci_recensione(movie_id):
+    insert_review(request.form, movie_id)
+    movie = get_movie_by_id(movie_id)
+    reviews = get_movie_review(movie_id)
+    return render_template("paginaFilm.html", movie=movie, reviews=reviews)
+
+
+@app.route("/delete_recensione", methods=['POST'])
+def delete_recensione():
+    review_id = request.form.get("review_id")
+    delete_review(review_id)
+    movie_id = request.form.get("movie_id")
+    movie = get_movie_by_id(movie_id)
+    reviews = get_movie_review(movie_id)
+    return render_template("paginaFilm.html", movie=movie, reviews=reviews)
+
+@app.route('/top-critic')
+def top_critic():
+    top_critics_movies = film_operator.get_top_critic_movies(limit=50)
+    return render_template("topCritic.html", top_critics_movies=top_critics_movies)
 
 
 @app.route('/api/search')

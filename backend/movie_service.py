@@ -1,11 +1,16 @@
 import re
+from datetime import datetime
+from flask import url_for
+from CRUD_operations.OperatorReview import OperatorReview
 from .db import get_db
 from .tmdb_service import fetch_poster_url, fetch_trailer_url
 from bson import ObjectId
+from CRUD_operations.OperatorFilm import OperatorFilm
 
 _db = get_db()
 _movies = _db["Film_Rotten_Tomatoes"]
 _reviews = _db["Review_Rotten_Tomatoes"]
+op_film = OperatorFilm(_db, "Film_Rotten_Tomatoes")
 
 
 def _ensure_poster(movie: dict) -> str | None:
@@ -19,7 +24,10 @@ def _ensure_poster(movie: dict) -> str | None:
         print(f"Trovato poster per {movie['movie_title']}: {poster}")
         _movies.update_one({"_id": movie["_id"]}, {"$set": {"poster_url": poster}})
     else:
-        print(f"Nessun poster trovato per {movie['movie_title']}")
+        print(f"Nessun poster trovato per {movie['movie_title']}, uso immagine di fallback")
+        fallback_poster = url_for('static', filename='img/no_available.jpg')
+        _movies.update_one({"_id": movie["_id"]}, {"$set": {"poster_url": fallback_poster}})
+        return fallback_poster
     return poster
 
 
@@ -110,7 +118,7 @@ def get_movie_review(movie_id):
     # Recupera tutte le recensioni con lo stesso rotten_tomatoes_link
     reviews = list(_reviews.find(
         {"rotten_tomatoes_link": rt_link},
-        {"critic_name": 1, "review_content": 1, "top_critic": 1, "publisher_name": 1, "review_date": 1, "review_score": 1, "_id": 0}
+        {"critic_name": 1, "review_content": 1, "top_critic": 1, "publisher_name": 1, "review_date": 1, "review_score": 1, "_id": 1}
     ))
 
     return reviews
@@ -192,3 +200,22 @@ def search_movies_by_text(query_text: str, limit: int = 10):
     except Exception as e:
         print(f"Database regex search error: {e}")
         return []
+
+
+def insert_review(data_review, movie_id):
+    review_dict = {}
+    operatorReview = OperatorReview(_db, "Review_Rotten_Tomatoes")
+    movie = op_film.get_film_by_id(movie_id)
+    review_dict['rotten_tomatoes_link'] = movie['rotten_tomatoes_link']
+    review_dict['critic_name'] = data_review.get('critic_name')
+    review_dict['publisher_name'] = data_review.get('publisher_name')
+    review_dict['review_score'] = data_review.get('review_score') + "/5"
+    review_dict['top_critic'] = True if data_review.get('top_critic') else False
+    review_dict['review_date'] = datetime.today()
+    review_dict['review_content'] = data_review.get('review_content')
+    operatorReview.create_review(review_dict)
+
+
+def delete_review(review_id):
+    operatorReview = OperatorReview(_db, "Review_Rotten_Tomatoes")
+    operatorReview.delete_review_by_id(review_id)

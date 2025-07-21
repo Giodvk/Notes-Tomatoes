@@ -1,0 +1,78 @@
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.page-header {
+    background: linear-gradient(to right, rgba(20, 20, 20, 0.85) 10%, rgba(20, 20, 20, 0.3) 100%),
+                url('https://www.themoviedb.org/t/p/original/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg') center/cover no-repeat;
+    margin-bottom: 30px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px 20px 80px;
+    position: relative;
+}
+
+.page-header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    font-weight: 600;
+    position: relative;
+    z-index: 2;
+}
+
+.page-header h1 .fas.fa-star {
+    font-size: 0.9em;
+    margin-right: 8px;
+}
+
+.page-header p {
+    margin-bottom: 0;
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+}
+
+/* Media query per tablet (768px+) */
+@media (min-width: 768px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        padding: 30px 40px;
+        gap: 25px;
+    }
+
+    .page-header {
+        min-height: 400px;
+        padding: 30px 40px 100px;
+    }
+
+    .page-header h1 {
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+    }
+}
+
+/* Media query per desktop (1024px+) */
+@media (min-width: 1024px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        padding: 40px 60px;
+        gap: 30px;
+    }
+
+    .page-header {
+        min-height: 500px;
+        padding: 40px 60px 120px;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 25px;
+    }
+}
+

@@ -10,6 +10,7 @@
 
 </head>
 <body>
+
     <div id="navbar-container">
         {% include 'navbar.html' %}
     </div>
@@ -60,6 +61,7 @@
         </div>
 
         <div class="reviews-container">
+            {% include 'inserisci_recensioni.html' %}
             <h2 class="section-title"><i class="fas fa-comment-alt"></i> Recensioni dei Critici</h2>
 
             {% if reviews %}
@@ -83,6 +85,15 @@
                             <span class="review-date">{{ review.review_date.strftime('%d-%m-%Y')}}</span>
                         </div>
                     </div>
+
+                    <form action="{{ url_for('delete_recensione') }}" method="POST" style="display:inline;">
+                        <button type="submit" class="delete-btn" title="Elimina recensione">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                        <input type="hidden" name="review_id" value = {{review._id}}>
+                        <input type="hidden" name="movie_id" value= {{movie._id}}>
+                    </form>
+
                     <div class="review-content">
                         <p>{{ review.review_content }}</p>
                     </div>
