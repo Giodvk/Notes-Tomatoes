@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
     const stars = document.querySelectorAll('.rating-stars i');
     const ratingValue = document.querySelector('.rating-value');
     const ratingInput = document.getElementById('review_score');

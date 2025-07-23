@@ -63,10 +63,12 @@
         <div class="reviews-container">
             {% include 'inserisci_recensioni.html' %}
             <h2 class="section-title"><i class="fas fa-comment-alt"></i> Recensioni dei Critici</h2>
-
             {% if reviews %}
                 {% for review in reviews %}
                 <div class="review-card">
+                    <button class="action-btn edit-btn" data-review-id="{{review._id}}" index-id = "{{loop.index}}" title="Modifica recensione">
+                        <i class="fas fa-edit"></i>
+                    </button>
                     <div class="review-header">
                         <div class="review-author-info">
                             <div class="review-author">{{ review.critic_name }}</div>
@@ -87,7 +89,7 @@
                     </div>
 
                     <form action="{{ url_for('delete_recensione') }}" method="POST" style="display:inline;">
-                        <button type="submit" class="delete-btn" title="Elimina recensione">
+                        <button type="submit" class="action-btn delete-btn" title="Elimina recensione">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                         <input type="hidden" name="review_id" value = {{review._id}}>
@@ -107,6 +109,45 @@
         </div>
     </div>
 
+<div id="editReviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="fas fa-edit"></i> Modifica Recensione</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+
+            <form id="editReviewForm" class="edit-review-form">
+                <input type="hidden" id="editReviewId" name="review_id">
+                <input type="hidden" name="movie_id" value="{{movie._id}}">
+
+                <div class="form-group">
+                    <label for="editReviewContent"><i class="fas fa-comment-alt"></i>Contenuto della Recensione</label>
+                    <textarea id="editReviewContent" name="review_content" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editReviewScore"><i class="fas fa-star"></i> Valutazione</label>
+                    <div class="rating-container">
+                        <div class="rating-stars" id="editRatingStars">
+                            <i class="far fa-star" data-value="1"></i>
+                            <i class="far fa-star" data-value="2"></i>
+                            <i class="far fa-star" data-value="3"></i>
+                            <i class="far fa-star" data-value="4"></i>
+                            <i class="far fa-star" data-value="5"></i>
+                        </div>
+                        <div class="rating-value">5.0</div>
+                        <input type="hidden" name="review_score" id="editReviewScore" value="5.0">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="modal-btn btn-cancel">Annulla</button>
+                    <button type="submit" class="modal-btn btn-save">Salva Modifiche</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-links">
             <a href="#">Informazioni</a>
@@ -121,5 +162,148 @@
 
     <script src="{{ url_for('static', filename='navbar/navbar.js') }}"></script>
      <script src="{{ url_for('static', filename='navbar/search.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementi del DOM
+            const modal = document.getElementById('editReviewModal');
+            const closeModal = document.querySelector('.close-modal');
+            const cancelBtn = document.querySelector('.btn-cancel');
+            const editReviewForm = document.getElementById('editReviewForm');
+            const editBtns = document.querySelectorAll('.edit-btn');
+
+            // Sistema di rating per il modal
+            const editStars = document.querySelectorAll('#editRatingStars i');
+            const editRatingValue = document.querySelector('#editReviewModal .rating-value');
+            const editRatingInput = document.getElementById('editReviewScore');
+
+            const reviews_contents = document.querySelectorAll('.review-card');
+            let contents = {}
+            let i = 1
+            reviews_contents.forEach(review =>{
+                let content = review.querySelector(".review-content")
+                let score = review.querySelector(".review-score") ? review.querySelector(".review-score").textContent : 0
+
+                contents[i] = {content : content.textContent, score : score}
+                i = i + 1
+            });
+
+
+        function openEditModal(reviewId, indexId) {
+                const review = contents[indexId];
+                if (!review) return;
+
+                document.getElementById('editReviewId').value = reviewId;
+                document.getElementById('editReviewContent').value = review.content;
+
+                const score = review.score;
+                editRatingInput.value = score;
+
+                editStars.forEach((star, index) => {
+                    if (index < score) {
+                        star.classList.remove('far');
+                        star.classList.add('fas', 'active');
+                    } else {
+                        star.classList.remove('fas', 'active');
+                        star.classList.add('far');
+                    }
+                });
+
+                // Mostra il modal
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Funzione per chiudere il modal
+            function closeEditModal() {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+
+            // Event listeners per aprire il modal
+            editBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const reviewId = btn.getAttribute('data-review-id');
+                    const indexId = btn.getAttribute('index-id')
+                    openEditModal(reviewId, indexId);
+                });
+            });
+
+            // Event listeners per chiudere il modal
+            closeModal.addEventListener('click', closeEditModal);
+            cancelBtn.addEventListener('click', closeEditModal);
+
+            editStars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const value = parseInt(star.getAttribute('data-value'));
+                    editRatingInput.value = value;
+                    editRatingValue.textContent = value.toFixed(1);
+
+                    editStars.forEach((s, index) => {
+                        if (index < value) {
+                            s.classList.remove('far');
+                            s.classList.add('fas', 'active');
+                        } else {
+                            s.classList.remove('fas', 'active');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+
+                star.addEventListener('mouseover', () => {
+                    const hoverValue = parseInt(star.getAttribute('data-value'));
+                    editStars.forEach((s, index) => {
+                        if (index < hoverValue) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+
+                star.addEventListener('mouseout', () => {
+                    const currentValue = parseInt(editRatingInput.value);
+                    editStars.forEach((s, index) => {
+                        if (index < currentValue) {
+                            s.classList.remove('far');
+                            s.classList.add('fas', 'active');
+                        } else {
+                            s.classList.remove('fas', 'active');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+            });
+
+            // Gestione submit del form (dovrebbe essere collegato al backend)
+            editReviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Qui dovrebbe esserci la chiamata al backend per salvare le modifiche
+                const reviewId = document.getElementById('editReviewId').value;
+                const newContent = document.getElementById('editReviewContent').value;
+                const newScore = document.getElementById('editReviewScore').value;
+                const movie_id = editReviewForm.elements['movie_id'].value
+                fetch("/update_recensione/"+movie_id, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                       review_id : reviewId,
+                       new_desc: newContent,
+                       new_score: newScore
+                    }),
+                    headers: {
+                            "Content-type": "application/json; charset=UTF-8"
+                    }
+                })
+
+                // Chiudi il modal dopo il salvataggio
+                closeEditModal();
+
+                // Mostra un feedback all'utente
+                alert('Recensione aggiornata con successo!');
+            });
+        });
+    </script>
 </body>
 </html>

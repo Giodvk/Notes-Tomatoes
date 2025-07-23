@@ -6,7 +6,7 @@ from pymongo.write_concern import WriteConcern
 from dotenv import load_dotenv
 import os
 from CRUD_operations.OperatorFilm import OperatorFilm
-from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review, search_movies_by_text, insert_review, delete_review
+from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review, search_movies_by_text, insert_review, delete_review, update_review
 
 # Carica variabili da .env
 load_dotenv()
@@ -60,6 +60,19 @@ def delete_recensione():
     movie = get_movie_by_id(movie_id)
     reviews = get_movie_review(movie_id)
     return render_template("paginaFilm.html", movie=movie, reviews=reviews)
+
+@app.route("/update_recensione/<movie_id>", methods=['POST'])
+def update_recensione(movie_id):
+    data = request.get_json()
+    review_id = data["review_id"]
+    new_desc = data["new_desc"]
+    new_score = data["new_score"]
+    update_review(review_id, new_desc, new_score)
+    movie = get_movie_by_id(movie_id)
+    reviews = get_movie_review(movie_id)
+    return render_template("paginaFilm.html", movie=movie, reviews=reviews)
+
+
 
 @app.route('/top-critic')
 def top_critic():

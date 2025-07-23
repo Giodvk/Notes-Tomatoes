@@ -219,3 +219,8 @@ def insert_review(data_review, movie_id):
 def delete_review(review_id):
     operatorReview = OperatorReview(_db, "Review_Rotten_Tomatoes")
     operatorReview.delete_review_by_id(review_id)
+
+def update_review(review_id, new_desc, new_score):
+    operatorReview = OperatorReview(_db, "Review_Rotten_Tomatoes")
+    operatorReview.update_review_by_id(review_id, new_desc)
+    operatorReview.update_review_score_by_id(review_id, new_score)

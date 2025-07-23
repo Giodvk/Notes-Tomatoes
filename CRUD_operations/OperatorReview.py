@@ -47,7 +47,7 @@ class OperatorReview:
     def update_review_by_id(self, review_id, new_description):
         try:
             result = self.table.update_one({'_id': ObjectId(review_id)},
-                              {'$set': {'description': new_description}})
+                              {'$set': {'review_content': new_description}})
             logger.info(f"Updated {result.modified_count} records")
         except InvalidId:
             logger.error("Invalid Object ID {}".format(review_id))
@@ -59,7 +59,7 @@ class OperatorReview:
 
     def update_review_score_by_id(self, review_id, new_score):
         result = self.table.update_one({'_id': ObjectId(review_id)},
-                                       {'$set': {'score': new_score}})
+                                       {'$set': {'review_score': new_score + "/5"}})
         logger.info(f"Updated {result.modified_count} records with score {new_score}")
 
     def join_reviews_by_score(self, rotten_score):
