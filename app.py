@@ -34,6 +34,10 @@ def home():
     top = get_most_review(limit=15)
     return render_template("home.html", movies=movies, recent=recent, top=top)
 
+@app.route("/info")
+def info():
+    return render_template("info.html")
+
 
 @app.route('/film/<movie_id>')
 def pagina_film(movie_id):

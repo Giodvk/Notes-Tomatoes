@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar/navbar.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='info/info.css') }}">
+    <title>Informazioni su CineCritica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="navbar-container">
+        {% include 'navbar.html' %}
+    </div>
+    <section class="info-hero">
+        <h1>Informazioni su CineCritica</h1>
+        <p>La piattaforma che ti offre le migliori recensioni cinematografiche da Rotten Tomatoes, organizzate e analizzate per una migliore esperienza di scoperta</p>
+    </section>
+
+    <div class="info-container">
+        <section class="info-section">
+            <h2><i class="fas fa-film"></i> Cos'è CineCritica?</h2>
+            <p>CineCritica è un'applicazione che raccoglie e organizza i dati della critica cinematografica dal famoso portale <span class="highlight">Rotten Tomatoes</span>, offrendo una visione strutturata e semplificata delle valutazioni dei film.</p>
+            <p>Il nostro obiettivo è aiutarti a scoprire nuovi film attraverso le opinioni dei critici professionisti e del pubblico, con un'interfaccia intuitiva e funzionale.</p>
+        </section>
+
+        <section class="info-section">
+            <h2><i class="fas fa-search"></i> Cosa puoi fare</h2>
+            <ul>
+                <li>Esplorare i <span class="highlight">film più apprezzati</span> dalla critica e dal pubblico</li>
+                <li>Leggere le recensioni dei <span class="highlight">top critics</span> su ogni pellicola</li>
+                <li>Scoprire capolavori nascosti attraverso i nostri filtri e categorie</li>
+                <li>Confrontare le valutazioni della critica con quelle del pubblico</li>
+                <li>Trovare film per genere, durata o periodo di uscita</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2><i class="fas fa-link"></i> Collegamento a Rotten Tomatoes</h2>
+            <p>Tutti i nostri dati provengono dal portale <span class="highlight">Rotten Tomatoes</span>, il sito di riferimento per la critica cinematografica online. Ogni film nel nostro database è collegato alla sua pagina originale su Rotten Tomatoes tramite un link univoco.</p>
+            <p>Le recensioni sono sempre associate a un film esistente e includono dettagli come la data di pubblicazione, l'identità del critico e la valutazione (fresh/rotten).</p>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">Informazioni</a>
+            <a href="#">Contatti</a>
+            <a href="#">Termini di servizio</a>
+            <a href="#">Privacy</a>
+        </div>
+        <p class="copyright">© 2023 CineCritica. Tutti i diritti riservati. Dati forniti da Rotten Tomatoes.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='navbar/navbar.js') }}"></script>
+    <script src="{{ url_for('static', filename='navbar/search.js') }}"></script>
+</body>
+</html>
