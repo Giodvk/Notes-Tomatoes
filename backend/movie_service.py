@@ -79,18 +79,33 @@ def get_longest(limit=15):
         movies.append(m)
     return movies
 
+def get_rotten(limit=15):
+    cur = (
+        _movies.find(
+            {"tomatometer_status": "Rotten"},
+            {"movie_title": 1, "tomatometer_rating": 1, "poster_url": 1}
+        )
+        .sort("tomatometer_rating", -1)
+        .limit(limit)
+    )
+
+    movies = []
+    for m in cur:
+        m["poster_url"] = _ensure_poster(m)
+        movies.append(m)
+    return movies
+
 
 def get_most_review(limit=15):
     """
-    Restituisce i film con piu reviews.
-    - Ordina in modo decrescente per numero di reviews.
+    Restituisce i film con tomatometer rating piu alto
     """
     cur = (
         _movies.find(
-            { "tomatometer_count": { "$exists": True, "$ne": None } },
-            { "movie_title": 1, "tomatometer_count": 1, "tomatometer_rating": 1, "poster_url": 1 }
+            { "audience_count": { "$exists": True, "$ne": None } },
+            { "movie_title": 1, "audience_count": 1, "poster_url": 1 }
         )
-        .sort("tomatometer_count", -1)   # dal rating più alto in giù
+        .sort("audience_count", -1)   # dal rating più alto in giù
         .limit(limit)
     )
 

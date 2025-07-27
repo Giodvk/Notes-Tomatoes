@@ -6,7 +6,8 @@ from pymongo.write_concern import WriteConcern
 from dotenv import load_dotenv
 import os
 from CRUD_operations.OperatorFilm import OperatorFilm
-from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review, search_movies_by_text, insert_review, delete_review, update_review
+from backend.movie_service import get_certified_fresh, get_most_review, get_longest, get_movie_by_id, get_movie_review, \
+    search_movies_by_text, insert_review, delete_review, update_review, get_rotten
 
 # Carica variabili da .env
 load_dotenv()
@@ -31,7 +32,7 @@ film_operator = OperatorFilm(db, "Film_Rotten_Tomatoes")
 def home():
     movies = get_certified_fresh(limit=15)
     recent = get_longest(limit=15)
-    top = get_most_review(limit=15)
+    top = get_rotten(limit=15)
     return render_template("home.html", movies=movies, recent=recent, top=top)
 
 @app.route("/info")
