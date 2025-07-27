@@ -1,3 +1,4 @@
+import time
 
 import pymongo
 from bson import ObjectId
@@ -49,24 +50,42 @@ class OperatorFilm:
 
     def get_top_critic_movies(self, limit=50):
         try:
-            # Prima trova tutti gli ID di film con recensioni top critic
-            review_ids = self.collection.database["Review_Rotten_Tomatoes"].distinct(
-                "rotten_tomatoes_link",
-                {"top_critic": True}
-            )
-
-            # Poi recupera i film corrispondenti
-            movies = list(self.collection.find(
-                {"rotten_tomatoes_link": {"$in": review_ids}},
+            pipeline = [
                 {
-                    "movie_title": 1,
-                    "poster_url": 1,
-                    "tomatometer_rating": 1,
-                    "top_critics_rating": 1,
-                    "rotten_tomatoes_link": 1
+                    "$match": {
+                        "top_critic": True
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": "$rotten_tomatoes_link"
+                    }
+                },
+                {
+                    "$limit": limit
+                },
+                {
+                    "$lookup": {
+                        "from": "Film_Rotten_Tomatoes",
+                        "localField": "_id",  # The link from the reviews collection
+                        "foreignField": "rotten_tomatoes_link",  # The link in the movies collection
+                        "as": "movieDetails"
+                    }
+                },
+                {
+                    "$unwind": "$movieDetails"
+                },
+                {
+                    "$replaceRoot": {
+                        "newRoot": "$movieDetails"
+                    }
                 }
-            ).sort("tomatometer_rating", -1).limit(limit))
+            ]
 
+            review_collection = self.collection.database.get_collection("Review_Rotten_Tomatoes")
+            movies = list(review_collection.aggregate(pipeline))
+
+            # This part remains the same
             for movie in movies:
                 if not movie.get("poster_url"):
                     movie["poster_url"] = _ensure_poster(movie)
